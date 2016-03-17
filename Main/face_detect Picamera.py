@@ -108,12 +108,15 @@ def capVideo():
         cv2.imshow('Video', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('p'):
-            w,h=video_capture.get(3),video_capture.get(4)
+            #orig=cv2.cvtColor(orig, cv2.COLOR_BGR2GRAY)
+            w,h=350,350
             finalImage=addItems(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
+            #os.system('sox input.wav -b 24 output.aiff rate -v -L -b 90 48k')
             cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
             subprocess.call(cmd, shell=True)                                     # "Muxing Done
             print('Muxing Done')
+            break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
