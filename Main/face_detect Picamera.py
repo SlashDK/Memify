@@ -32,10 +32,26 @@ def addItems(frame,faces,mouths,eyes):
     cv2.imwrite(filename,frame)
     return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-def makeVideo(frame):
-    fourcc=cv2.cv.CV_FOURCC(*'XVID')
-    out = cv2.VideoWriter('output.mpeg',fourcc, 20.0, (320,320))
-    out.write(frame)
+def makeVideo(frame,w,h):
+    fps=25
+    capSize = (int(w),int(h))
+    fourcc=cv2.cv.CV_FOURCC('m','p','4','v')
+    out = cv2.VideoWriter() 
+    success = out.open('output.mov',fourcc,fps,capSize,True) 
+    frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2RGB)
+    for i in range(100):
+        temp=cv2.resize(frame,(int(w)+i*2,int(h)+i*2))
+        tempFrame = temp[i:int(h)+i,i:int(w)+i]
+        out.write(tempFrame)
+        if(i==99):
+            for i in range (25):
+                out.write(tempFrame)
+    # for i in range(40,0,-1):
+    #     temp=cv2.resize(frame,(int(w)+2*i,int(h)+2*i))
+    #     tempFrame = temp[i/2:int(h)+i/2,i/2:int(w)+i/2]
+    #     out.write(tempFrame)
+    out.release() 
+    out=None
 
 #realpython.com
 def capVideo():
@@ -93,8 +109,9 @@ def capVideo():
 
         if cv2.waitKey(1) & 0xFF == ord('p'):
             #orig=cv2.cvtColor(orig, cv2.COLOR_BGR2GRAY)
+            w,h=350,350
             finalImage=addItems(orig,faces,mouths,eyes)
-            makeVideo(finalImage)
+            makeVideo(finalImage,w,h)
             break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
