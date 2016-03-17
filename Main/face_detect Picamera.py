@@ -6,7 +6,7 @@ import time
 import datetime
 import numpy
 import copy
-
+import os
 
 
 def addItems(frame,faces,mouths,eyes):
@@ -108,11 +108,12 @@ def capVideo():
         cv2.imshow('Video', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('p'):
-            #orig=cv2.cvtColor(orig, cv2.COLOR_BGR2GRAY)
-            w,h=350,350
+            w,h=video_capture.get(3),video_capture.get(4)
             finalImage=addItems(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
-            break
+            cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
+            subprocess.call(cmd, shell=True)                                     # "Muxing Done
+            print('Muxing Done')
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

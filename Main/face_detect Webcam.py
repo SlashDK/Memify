@@ -2,6 +2,7 @@ import cv2
 import sys
 import datetime
 import numpy
+import subprocess
 
 def addItems(frame,faces,mouths,eyes):
     glasses = cv2.imread("glasses.png",-1)
@@ -96,6 +97,9 @@ def capVideo():
             w,h=video_capture.get(3),video_capture.get(4)
             finalImage=addItems(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
+            cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
+            subprocess.call(cmd, shell=True)                                     # "Muxing Done
+            print('Muxing Done')
             break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
