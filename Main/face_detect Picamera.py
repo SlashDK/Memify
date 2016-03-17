@@ -19,15 +19,17 @@ def addItems(frame,faces,mouths,eyes):
     #print(joint)
     for (x, y, w, h) in faces:
         for (x2, y2, w2, h2) in eyes:
-            if(x2>x and x2+w2<x+w and y2>y and y2+h2<y+h and y2+h2/2<y+h/2 and x2+w2/2>x+h/3 and x2+w2/2<x+2*h/3):
+            if(x2>x-w/10 and x2+w2<x+w+w/10 and y2>y and y2+h2<y+h and y2+h2/2<y+h/2 and x2+w2/2>x+h/3 and x2+w2/2<x+2*h/3):
                 glasses=cv2.resize(glasses,(w2,h2))
                 for c in range(0,3):
                     frame[y2+h2/5:y2+6*h2/5, x2:x2+w2, c] =  glasses[:,:,c] * (glasses[:,:,3]/255.0) + frame[y2+h2/5:y2+6*h2/5, x2:x2+w2, c] * (1.0 - glasses[:,:,3]/255.0)
+                break
         for (x2, y2, w2, h2) in mouths:
-            if(x2>x and x2<x+w and y2>y+h/2 and y2+h2<y+h and x2+w2/2>x+h/3 and x2+w2/2<x+2*h/3):
+            if(x2>x-w/10 and x2<x+w+w/10 and y2>y+h/2 and y2+h2<y+5*h/4 and x2+w2/2>x+h/3 and x2+w2/2<x+2*h/3):
                 joint=cv2.resize(joint,(w2,h2))
                 for c in range(0,3):
                     frame[y2+h2/5:y2+6*h2/5, x2+w2/2:x2+3*w2/2, c] =  joint[:,:,c] * (joint[:,:,3]/255.0) + frame[y2+h2/5:y2+6*h2/5, x2+w2/2:x2+3*w2/2, c] * (1.0 - joint[:,:,3]/255.0)
+                break
 
     cv2.imwrite(filename,frame)
     return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -39,12 +41,12 @@ def makeVideo(frame,w,h):
     out = cv2.VideoWriter() 
     success = out.open('output.mov',fourcc,fps,capSize,True) 
     frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2RGB)
-    for i in range(100):
+    for i in range(70):
         temp=cv2.resize(frame,(int(w)+i*2,int(h)+i*2))
         tempFrame = temp[i:int(h)+i,i:int(w)+i]
         out.write(tempFrame)
-        if(i==99):
-            for i in range (25):
+        if(i==69):
+            for i in range (125):
                 out.write(tempFrame)
     # for i in range(40,0,-1):
     #     temp=cv2.resize(frame,(int(w)+2*i,int(h)+2*i))
@@ -113,9 +115,11 @@ def capVideo():
             finalImage=addItems(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
             #os.system('sox input.wav -b 24 output.aiff rate -v -L -b 90 48k')
-            cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
-            subprocess.call(cmd, shell=True)                                     # "Muxing Done
+            cmd = 'avconv -y -i Final.mp4 -r 30 -i output.mov -shortest result.mkv'
+            os.system(cmd)                                     # "Muxing Done
             print('Muxing Done')
+            cmd = 'omxplayer result.mkv'
+            os.system(cmd) 
             break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
