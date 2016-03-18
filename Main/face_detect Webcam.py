@@ -23,7 +23,7 @@ def addItems(frame,faces,mouths,eyes):
             if(x2>x and x2<x+w and y2>y+h/2 and y2+h2<y+5*h/4 and x2+w2/2>x+h/3 and x2+w2/2<x+2*h/3):
                 joint=cv2.resize(joint,(w2,h2))
                 for c in range(0,3):
-                    frame[y2+h2/5:y2+6*h2/5, x2+w2/2:x2+3*w2/2, c] =  joint[:,:,c] * (joint[:,:,3]/255.0) + frame[y2+h2/5:y2+6*h2/5, x2+w2/2:x2+3*w2/2, c] * (1.0 - joint[:,:,3]/255.0)
+                    frame[y2+h2/4:y2+5*h2/4, x2+w2/2:x2+3*w2/2, c] =  joint[:,:,c] * (joint[:,:,3]/255.0) + frame[y2+h2/4:y2+5*h2/4, x2+w2/2:x2+3*w2/2, c] * (1.0 - joint[:,:,3]/255.0)
                 break
 
     cv2.imwrite(filename,frame)
@@ -102,7 +102,6 @@ def capVideo():
             print('Muxing Done')
             cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "result.mkv" -f --play-and-stop'
             subprocess.call(cmd, shell=True) 
-            
             break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):

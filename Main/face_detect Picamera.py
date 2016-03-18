@@ -19,7 +19,7 @@ def addItems(frame,faces,mouths,eyes):
     #print(joint)
     for (x, y, w, h) in faces:
         for (x2, y2, w2, h2) in eyes:
-            if(x2>x-w/10 and x2+w2<x+w+w/10 and y2>y and y2+h2<y+h and y2+h2/2<y+h/2 and x2+w2/2>x+h/3 and x2+w2/2<x+2*h/3):
+            if(x2>x-w/10 and x2+w2<x+w+w/10 and y2>y and y2+h2<y+3*h/5 and x2+w2/2>x+h/3 and x2+w2/2<x+2*w/3):
                 glasses=cv2.resize(glasses,(w2,h2))
                 for c in range(0,3):
                     frame[y2+h2/5:y2+6*h2/5, x2:x2+w2, c] =  glasses[:,:,c] * (glasses[:,:,3]/255.0) + frame[y2+h2/5:y2+6*h2/5, x2:x2+w2, c] * (1.0 - glasses[:,:,3]/255.0)
