@@ -83,7 +83,6 @@ def capVideo():
 
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
-            print(x,y,w,h)
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
         for (x, y, w, h) in mouths:
@@ -98,12 +97,16 @@ def capVideo():
         if cv2.waitKey(1) & 0xFF == ord('p'):
             #orig=cv2.cvtColor(orig, cv2.COLOR_BGR2GRAY)
             w,h=video_capture.get(3),video_capture.get(4)
+            video_capture.release()
+            cv2.destroyAllWindows()
             finalImage=addItems(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
+            
+            
             cmd = 'pwd'
             subprocess.call(cmd, shell=True)  
             print(basedir)
-            cmd = 'ffmpeg -y -i %s/Final.mp4 -r 30 -i %s/output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest %s/result.mkv' % (basedir,basedir,basedir)
+            cmd = 'ffmpeg -y -i "%s"/Final.mp4 -r 30 -i "%s"/output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest "%s"/result.mkv' % (basedir,basedir,basedir)
             subprocess.call(cmd, shell=True)                                     # "Muxing Done
             print('Muxing Done')
             cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "%s/result.mkv" -f --play-and-stop' % (basedir)
