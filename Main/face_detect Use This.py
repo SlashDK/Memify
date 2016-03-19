@@ -36,6 +36,15 @@ def makeVideo(frame,w,h):
     out = cv2.VideoWriter() 
     success = out.open('output.mov',fourcc,fps,capSize,True) 
     frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2RGB)
+    # for i in range(100):
+    #     temp=cv2.resize(frame,(int(w)+int(w*i/100),int(h)+int(h*i/100)))
+    #     #tempFrame = temp[i/2:int(h)+i/2,i/2:int(w)+i/2]
+    #     tempFrame = temp[int((h+h*i/100)/2 - h/2):int((h+h*i/100)/2 + h/2) + 10,
+    #     int((w+w*w/100)/2 - w/2):int((w+w*i/100)/2 + w/2) +10]
+    #     tempFrame=tempFrame[0:int(h),0:int(w)]
+    #     out.write(tempFrame)
+    # for i in range (65):
+    #     out.write(tempFrame)
     for i in range(162):
         temp=cv2.resize(frame,(int(w)+2*i,int(h)+2*i))
         tempFrame = temp[i/2:int(h)+i/2,i/2:int(w)+i/2]
