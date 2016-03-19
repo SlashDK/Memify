@@ -4,12 +4,14 @@ import datetime
 import numpy
 import subprocess
 
+basedir = os.path.dirname(sys.argv[0])
+
 def addItems(frame,faces,mouths,eyes):
-    glasses = cv2.imread("glasses.png",-1)
-    joint = cv2.imread("joint.png",-1)
+    glasses = cv2.imread(basedir+"/glasses.png",-1)
+    joint = cv2.imread(basedir+"/joint.png",-1)
     
     t=datetime.datetime.now().time()
-    filename="Saved/"+str(t.hour)+str(t.minute)+str(t.second)+".jpg"
+    filename=basedir+"/Saved/"+str(t.hour)+str(t.minute)+str(t.second)+".jpg"
     #print(frame[0,0])
     #print(joint)
     for (x, y, w, h) in faces:
@@ -34,7 +36,7 @@ def makeVideo(frame,w,h):
     capSize = (int(w),int(h))
     fourcc=cv2.cv.CV_FOURCC('m','p','4','v')
     out = cv2.VideoWriter() 
-    success = out.open('output.mov',fourcc,fps,capSize,True) 
+    success = out.open(basedir+'/output.mov',fourcc,fps,capSize,True) 
     frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2RGB)
     for i in range(162):
         temp=cv2.resize(frame,(int(w)+2*i,int(h)+2*i))
@@ -45,9 +47,9 @@ def makeVideo(frame,w,h):
 
 #realpython.com
 def capVideo():
-    faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
-    mouthCascade = cv2.CascadeClassifier("Mouth.xml")
-    eyesCascade = cv2.CascadeClassifier("frontalEyes35x16.xml")
+    faceCascade = cv2.CascadeClassifier(basedir+"/haarcascade_frontalface_default.xml")
+    mouthCascade = cv2.CascadeClassifier(basedir+"/Mouth.xml")
+    eyesCascade = cv2.CascadeClassifier(basedir+"/frontalEyes35x16.xml")
     video_capture = cv2.VideoCapture(0)
 
     while True:
@@ -81,6 +83,7 @@ def capVideo():
 
         # Draw a rectangle around the faces
         for (x, y, w, h) in faces:
+            print(x,y,w,h)
             cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
         for (x, y, w, h) in mouths:
@@ -97,10 +100,13 @@ def capVideo():
             w,h=video_capture.get(3),video_capture.get(4)
             finalImage=addItems(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
-            cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
+            cmd = 'pwd'
+            subprocess.call(cmd, shell=True)  
+            print(basedir)
+            cmd = 'ffmpeg -y -i %s/Final.mp4 -r 30 -i %s/output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest %s/result.mkv' % (basedir,basedir,basedir)
             subprocess.call(cmd, shell=True)                                     # "Muxing Done
             print('Muxing Done')
-            cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "result.mkv" -f --play-and-stop'
+            cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "%s/result.mkv" -f --play-and-stop' % (basedir)
             subprocess.call(cmd, shell=True) 
             break
 
