@@ -4,7 +4,7 @@ import datetime
 import numpy
 import subprocess
 
-def addItems(frame,faces,mouths,eyes):
+def makeThug(frame,faces,mouths,eyes):
     glasses = cv2.imread("glasses.png",-1)
     joint = cv2.imread("joint.png",-1)
     
@@ -83,7 +83,7 @@ def capVideo():
         eyes = eyesCascade.detectMultiScale(
             gray,
             scaleFactor=1.1,
-            minNeighbors=5,
+            minNeighbors=10,
             minSize=(30, 30),
             flags=cv2.cv.CV_HAAR_SCALE_IMAGE
         )
@@ -104,7 +104,7 @@ def capVideo():
         if cv2.waitKey(1) & 0xFF == ord('p'):
             #orig=cv2.cvtColor(orig, cv2.COLOR_BGR2GRAY)
             w,h=video_capture.get(3),video_capture.get(4)
-            finalImage=addItems(orig,faces,mouths,eyes)
+            finalImage=makeThug(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
             cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
             subprocess.call(cmd, shell=True)                                     # "Muxing Done
