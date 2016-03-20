@@ -7,11 +7,9 @@ import subprocess
 def makeThug(frame,faces,mouths,eyes):
     glasses = cv2.imread("glasses.png",-1)
     joint = cv2.imread("joint.png",-1)
-    
     t=datetime.datetime.now().time()
     filename="Saved/"+str(t.hour)+str(t.minute)+str(t.second)+".jpg"
-    #print(frame[0,0])
-    #print(joint)
+    #work only inside faces
     for (x, y, w, h) in faces:
         for (x2, y2, w2, h2) in eyes:
             if(x2>x and x2+w2<x+w and y2>y and y2+h2<y+h and y2+h2/2<y+h/2 and x2+w2/2>x+h/3 and x2+w2/2<x+2*h/3):
@@ -51,9 +49,16 @@ def makeVideo(frame,w,h):
         out.write(tempFrame)
     out.release() 
     out=None
+    #add audio and make final video
+    cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
+    subprocess.call(cmd, shell=True)                                     # "Muxing Done
+    print('Muxing Done')
+    cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "result.mkv" -f --play-and-stop'
+    subprocess.call(cmd, shell=True) 
 
 #realpython.com
 def capVideo():
+    #initialize cascades
     faceCascade = cv2.CascadeClassifier("haarcascade_frontalface_default.xml")
     mouthCascade = cv2.CascadeClassifier("Mouth.xml")
     eyesCascade = cv2.CascadeClassifier("frontalEyes35x16.xml")
@@ -62,7 +67,9 @@ def capVideo():
     while True:
         # Capture frame-by-frame
         ret, frame = video_capture.read()
+        # save for later use
         ret, orig = video_capture.read()
+        # for processing
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         faces = faceCascade.detectMultiScale(
@@ -102,15 +109,9 @@ def capVideo():
         cv2.imshow('Video', frame)
 
         if cv2.waitKey(1) & 0xFF == ord('p'):
-            #orig=cv2.cvtColor(orig, cv2.COLOR_BGR2GRAY)
             w,h=video_capture.get(3),video_capture.get(4)
             finalImage=makeThug(orig,faces,mouths,eyes)
             makeVideo(finalImage,w,h)
-            cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
-            subprocess.call(cmd, shell=True)                                     # "Muxing Done
-            print('Muxing Done')
-            cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "result.mkv" -f --play-and-stop'
-            subprocess.call(cmd, shell=True) 
             break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
