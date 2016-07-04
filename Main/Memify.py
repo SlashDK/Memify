@@ -27,7 +27,7 @@ def makeThug(frame,faces,mouths,eyes):
     cv2.imwrite(filename,frame)
     return cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-def makeVideo(frame,w,h):
+def makeVideo(frame,w,h,mkey):
     fps=25
     capSize = (int(w),int(h))
     fourcc=cv2.cv.CV_FOURCC('m','p','4','v')
@@ -43,18 +43,19 @@ def makeVideo(frame,w,h):
     #     out.write(tempFrame)
     # for i in range (65):
     #     out.write(tempFrame)
-    for i in range(162):
-        temp=cv2.resize(frame,(int(w)+2*i,int(h)+2*i))
-        tempFrame = temp[i/2:int(h)+i/2,i/2:int(w)+i/2]
-        out.write(tempFrame)
-    out.release() 
-    out=None
-    #add audio and make final video
-    cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
-    subprocess.call(cmd, shell=True)                                     # "Muxing Done
-    print('Muxing Done')
-    cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "result.mkv" -f --play-and-stop'
-    subprocess.call(cmd, shell=True) 
+    if mkey == 'p':
+        for i in range(162):
+            temp=cv2.resize(frame,(int(w)+2*i,int(h)+2*i))
+            tempFrame = temp[i/2:int(h)+i/2,i/2:int(w)+i/2]
+            out.write(tempFrame)
+        out.release() 
+        out=None
+        #add audio and make final video
+        cmd = 'ffmpeg -y -i Final.mp4 -r 30 -i output.mov -filter:a aresample=async=1 -c:a flac -c:v copy -shortest result.mkv'
+        subprocess.call(cmd, shell=True)                                     # "Muxing Done
+        print('Muxing Done')
+        cmd = '~/../../Applications/VLC.app/Contents/MacOS/VLC "result.mkv" -f --play-and-stop'
+        subprocess.call(cmd, shell=True) 
 
 #realpython.com
 def capVideo():
@@ -111,7 +112,7 @@ def capVideo():
         if cv2.waitKey(1) & 0xFF == ord('p'):
             w,h=video_capture.get(3),video_capture.get(4)
             finalImage=makeThug(orig,faces,mouths,eyes)
-            makeVideo(finalImage,w,h)
+            makeVideo(finalImage,w,h,'p')
             break
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
