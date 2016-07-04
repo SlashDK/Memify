@@ -6,7 +6,7 @@ Uses OpenCV, numpy and a bit of command line stuff (ffmpeg).
 
 How to add a meme:
 
-1. Create a function for the meme.
+1) Create a function for the meme.
 
 1.1. Declare function with the shown parameters
    def meme1(frame,faces,mouths,eyes)
@@ -22,4 +22,4 @@ How to add a meme:
 
 1.5. Return the frame.
 
-2. Follow code for thug lyf in capVideo(), adding an else if statement.
+2) Follow code for thug lyf in capVideo(), adding an else if statement)
