@@ -4,6 +4,9 @@ An app to turn yourself (or anyone for that matter) into a meme. It takes in a l
 
 Uses OpenCV, numpy and a bit of command line stuff (ffmpeg).
 
+To run directly (no setup/ compilation/ libraries etc. required), extract Memify Just Run.zip and Run dist->Memify->Memify  
+(This works on macOS for sure. Can't say anything about Linux. Does NOT work on Windows. A pyinstaller .spec file is included if someone wants to make a Windows/Linux version of the file.)
+
 How to add a meme:
 
 1. Create a function for the meme.
